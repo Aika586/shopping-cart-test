@@ -10,7 +10,7 @@ import PlusIcon from "../assets/iconcomponents/PlusIcon";
 import HeartIcon from "../assets/iconcomponents/HeartIcon";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../features/cartSlice";
-import SelectIcon from "../assets/iconcomponents/selectIcon";
+import SelectIcon from "../assets/iconcomponents/SelectIcon";
 import DeleteIcon from "../assets/iconcomponents/DeleteIcon";
 import { removeFromCart } from "../features/cartSlice";
 
