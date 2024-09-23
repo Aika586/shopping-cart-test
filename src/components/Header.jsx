@@ -5,6 +5,7 @@ import {
   IconButton,
   Drawer,
   Box,
+  Stack,
 } from "@mui/material";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
@@ -14,7 +15,7 @@ import { useState } from "react";
 import CartItems from "./CartItems";
 import { useSelector } from "react-redux";
 
-const DrawerIcon = ({ icon, title, isOpen, toggleDrawer }) => (
+const DrawerIcon = ({ icon, title, isOpen, toggleDrawer, drawerContent }) => (
   <>
     <Box display="flex" alignItems="center" marginLeft="20px">
       <IconButton color="text.gray" onClick={toggleDrawer}>
@@ -24,17 +25,38 @@ const DrawerIcon = ({ icon, title, isOpen, toggleDrawer }) => (
         variant="caption"
         color="#5C5C5C"
         fontSize={"14px"}
-        fontWeight={title === "Профиль" || title === "Закладки" ? "normal" : "700"}
-
+        fontWeight={
+          title === "Профиль" || title === "Закладки" ? "normal" : "700"
+        }
       >
         {title}
       </Typography>
     </Box>
 
     <Drawer anchor="right" open={isOpen} onClose={toggleDrawer}>
-      <Box width={250} padding={2}>
-        <Typography variant="h6">{title}</Typography>
-        <CartItems/>
+      <Box
+        width={385}
+        padding={2}
+        sx={{
+          position: "relative",
+        }}
+      >
+        <Stack
+          sx={{
+            height: "100dvh",
+          }}
+        >
+          <Typography
+            variant="caption"
+            fontSize={"24px"}
+            component="div"
+            fontWeight={"700"}
+            sx={{ margin: "30px" }}
+          >
+            {title === "Профиль" || title === "Закладки" ? title : "Корзина"}
+          </Typography>
+          {drawerContent}
+        </Stack>
       </Box>
     </Drawer>
   </>
@@ -42,7 +64,7 @@ const DrawerIcon = ({ icon, title, isOpen, toggleDrawer }) => (
 
 const Header = () => {
   const [openDrawer, setOpenDrawer] = useState(null);
-  const {totalPrice}=useSelector((state)=>state.cartItems)
+  const { totalPrice } = useSelector((state) => state.cartItems);
 
   const toggleDrawer = (drawer) => {
     setOpenDrawer((prevDrawer) => (prevDrawer === drawer ? null : drawer));
@@ -53,18 +75,21 @@ const Header = () => {
       title: `${totalPrice} руб.`,
       isOpen: openDrawer === "cart",
       toggleDrawer: () => toggleDrawer("cart"),
+      drawerContent: <CartItems/>,
     },
     {
       icon: <FavoriteBorderOutlinedIcon />,
       title: "Закладки",
       isOpen: openDrawer === "favorites",
       toggleDrawer: () => toggleDrawer("favorites"),
+      drawerContent: <>Закладки</>,
     },
     {
       icon: <AccountCircleOutlinedIcon />,
       title: "Профиль",
       isOpen: openDrawer === "profile",
       toggleDrawer: () => toggleDrawer("profile"),
+      drawerContent: <>Профиль</>,
     },
   ];
 
@@ -101,6 +126,7 @@ const Header = () => {
               title={item.title}
               isOpen={item.isOpen}
               toggleDrawer={item.toggleDrawer}
+              drawerContent={item.drawerContent}
             />
           ))}
         </Box>

@@ -1,41 +1,42 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 const calculateTotalPrice = (items) => {
   const totalPrice = items.reduce((total, item) => total + item.price, 0);
-  const discountedPrice = totalPrice * 0.95; 
+  const tax = totalPrice * 0.05;
   return {
     totalPrice,
-    discountedPrice
+    tax,
   };
 };
 
 const cartSlice = createSlice({
-  name: 'cart',
+  name: "cart",
   initialState: {
     items: [],
     totalPrice: 0,
-    discountedPrice: 0,
+    tax: 0,
   },
   reducers: {
     addToCart: (state, action) => {
-      state.items.push(action.payload);
-      const { totalPrice, discountedPrice } = calculateTotalPrice(state.items);
+      const existingItem = state.items.find(
+        (item) => item.id === action.payload.id
+      );
+      if (!existingItem) {
+        // If the item is not already in the cart, add it with isAddedToCart set to true
+        state.items.push({ ...action.payload, isAddedToCart: true });
+      }
+      const { totalPrice, tax } = calculateTotalPrice(state.items);
       state.totalPrice = totalPrice;
-      state.discountedPrice = discountedPrice;
+      state.tax = tax;
     },
     removeFromCart: (state, action) => {
-      state.items = state.items.filter(item => item.id !== action.payload.id);
-      const { totalPrice, discountedPrice } = calculateTotalPrice(state.items);
+      state.items = state.items.filter((item) => item.id !== action.payload.id);
+      const { totalPrice, tax } = calculateTotalPrice(state.items);
       state.totalPrice = totalPrice;
-      state.discountedPrice = discountedPrice;
-    },
-    clearCart: (state) => {
-      state.items = [];
-      state.totalPrice = 0;
-      state.discountedPrice = 0;
+      state.tax = tax;
     },
   },
 });
 
-export const { addToCart, removeFromCart, clearCart } = cartSlice.actions;
+export const { addToCart, removeFromCart } = cartSlice.actions;
 export default cartSlice.reducer;
